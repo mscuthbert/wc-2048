@@ -1,0 +1,62 @@
+# node
+node_modules/
+
+# Build is not committed, just dist/
+build/
+
+# Python files (none here)
+__pycache__
+*.py[cod]
+
+.buildpath
+
+# emacs
+.*~
+*~
+
+# vim
+*.swp
+
+# Eclipse
+/.settings
+.settings
+
+# IDEA
+.project
+.pydevproject
+
+
+# OSX
+.DS_Store
+
+
+# C extensions
+*.so
+
+# Packages
+*.egg
+*.egg-info
+
+# Installer logs
+pip-log.txt
+
+# Unit test / coverage reports
+.coverage
+.tox
+nosetests.xml
+
+# Translations
+*.mo
+
+# Mr Developer
+.mr.developer.cfg
+
+# PyCharm
+.idea/encodings.xml
+.idea/misc.xml
+.idea/modules.xml
+.idea/vcs.xml
+.idea/workspace.xml
+
+# VSCode
+*.code-workspace
