@@ -38,6 +38,14 @@ interface GridStatus {
     points_gained_this_move: number,
 }
 
+interface GameState {
+    tile_values: number[][],
+    score: number,
+    best_score: number,
+    show_game_won: boolean,
+    game_won_already_shown: boolean,
+    game_over: boolean,
+}
 
 const RANDOM_START_HIGH = 0.9;
 const WINNING_VALUE = 2048;
@@ -46,6 +54,7 @@ const WINNING_VALUE = 2048;
 @customElement('m-app')
 export class MApp extends LitElement {
     @property({type: Number}) score: number = 0;
+    @property({type: Number}) best_score: number = 0;
     @property({type: Boolean}) show_game_won: boolean = false;
     @property({type: Boolean}) game_won_already_shown: boolean = false;
     @property({type: Boolean}) game_over: boolean = false;
@@ -180,25 +189,49 @@ export class MApp extends LitElement {
 
     protected override firstUpdated(_changedProperties: PropertyValues) {
         super.firstUpdated(_changedProperties);
-        this.m_grid.updateComplete.then(() => {
+        this.m_grid.updateComplete.then(async () => {
             this.prepare_for_new_game();
             this.setup_touch_events();
-            this.score = parseInt(window.localStorage.getItem('current_score')) || 0;
-            if (this.score !== 0) {
-                this.scoreboard.updateComplete.then(() => {
-                    this.scoreboard.score = this.score;
-                });
-            }
-            this.best_scoreboard.updateComplete.then(() => {
-                this.best_scoreboard.score = parseInt(window.localStorage.getItem('best_score')) || 0;
-            });
-            const tile_values = JSON.parse(window.localStorage.getItem('tile_storage'));
-            if (tile_values) {
-                this.load_tile_values_from_storage(tile_values);
-            } else {
+            await Promise.all([
+                this.scoreboard.updateComplete,
+                this.best_scoreboard.updateComplete,
+            ]);
+            this.load_state();
+            if (Array.from(this.iter_tiles({skip_null: true})).length === 0) {
                 this.start_new_game(false);
             }
         });
+    }
+
+    async store_state() {
+        await this.updateComplete;
+        const tile_values = this.store_tile_values();
+        const state: GameState = {
+            tile_values,
+            score: this.score,
+            best_score: this.best_score,
+            game_over: this.game_over,
+            show_game_won: this.show_game_won,
+            game_won_already_shown: this.game_won_already_shown,
+        };
+        window.localStorage.setItem('wc_2048', JSON.stringify(state));
+    }
+
+    load_state() {
+        const state_str = window.localStorage.getItem('wc_2048');
+        if (!state_str) {
+            return;
+        }
+        const state_storage: GameState = JSON.parse(state_str);
+        this.load_tile_values_from_storage(state_storage.tile_values);
+        this.score = state_storage.score;
+        // bypass effects by not using set_score
+        this.scoreboard.score = state_storage.score;
+        this.best_score = state_storage.best_score;
+        this.best_scoreboard.score = state_storage.best_score;
+        this.show_game_won = state_storage.show_game_won;
+        this.game_won_already_shown = state_storage.game_won_already_shown;
+        this.game_over = state_storage.game_over;
     }
 
     setup_touch_events() {
@@ -256,6 +289,7 @@ export class MApp extends LitElement {
         this._keep_going_listener = () => {
             this.game_won_already_shown = true;
             this.show_game_won = false;
+            this.store_state().catch(console.error);
         };
         document.addEventListener('keydown', this._keydown_listener);
         document.addEventListener('try_again', this._try_again_listener);
@@ -281,7 +315,7 @@ export class MApp extends LitElement {
         }
     }
 
-    store_tile_values() {
+    store_tile_values(): number[][] {
         const store_tiles = [
             [0, 0, 0, 0],
             [0, 0, 0, 0],
@@ -291,7 +325,7 @@ export class MApp extends LitElement {
         for (const [t, y, x] of this.iter_tiles_positions({skip_null: true})) {
             store_tiles[y][x] = t.val;
         }
-        window.localStorage.setItem('tile_storage', JSON.stringify(store_tiles));
+        return store_tiles;
     }
 
     how_to_play() {
@@ -382,7 +416,13 @@ export class MApp extends LitElement {
             [null, null, null, null],
         ];
         this.score = 0;
+        this.scoreboard.score = 0;  // bypass effects
+        this.show_game_won = false;
+        this.game_over = false;
         this.m_grid.remove_all_tiles();
+        this.game_over = false;
+        this.show_game_won = false;
+        this.game_won_already_shown = false;
     }
 
 
@@ -390,10 +430,6 @@ export class MApp extends LitElement {
         if (prepare) {
             this.prepare_for_new_game();
         }
-        this.game_over = false;
-        this.show_game_won = false;
-        this.game_won_already_shown = false;
-        this.scoreboard.score = 0;
         this.add_new_random_tile().catch(console.error);
         this.add_new_random_tile().catch(console.error);
     }
@@ -445,6 +481,7 @@ export class MApp extends LitElement {
             this.add_new_random_tile().catch(console.error);
             this.check_game_won();
             this.check_game_over();
+            this.store_state();
         }
     }
 
@@ -568,7 +605,7 @@ export class MApp extends LitElement {
             this.add_score(points_gained_this_move);
         }
         tiles_to_remove.map(rem_tile => rem_tile.remove());
-        this.store_tile_values();
+        this.store_state();
         return any_shifted;
     }
 
@@ -664,12 +701,12 @@ export class MApp extends LitElement {
 
     add_score(val: number) {
         this.score += val;
-        window.localStorage.setItem('current_score', this.score.toString());
         this.scoreboard.set_score(this.score).catch(console.error);
-        if (this.score > this.best_scoreboard.score) {
-            window.localStorage.setItem('best_score', this.score.toString());
+        if (this.score > this.best_score) {
+            this.best_score = this.score;
             this.best_scoreboard.set_score(this.score).catch(console.error);
         }
+        this.store_state();
     }
 
     add_tile(y: number, x: number, val: number = 2): Promise<void> {
@@ -678,7 +715,7 @@ export class MApp extends LitElement {
         t.y = y;
         t.x = x;
         this.tiles[y][x] = t;
-        this.store_tile_values();
+        this.store_state();
         return this.m_grid.append_tile(t);
     }
 }

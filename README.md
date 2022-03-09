@@ -50,25 +50,14 @@ that the version of 2048 on
 https://play2048.co differs from what is
 found on the GitHub repo).
 
-## Known Bugs
-
-When playing very fast, the +2, etc.
-message on the scores can disappear for
-up to a second.  This is because I don't
-want that message to appear until after
-the animation is done. Two fixes are
-possible: 
-
-1. Have the trigger happen before the move. This is what 2048 original does.
-2. Create a list of timeouts for the scroll up and cancel all of them.
-
-This seemed so little of a bug that it did not seem worth fixing.
+## Known Differences
 
 I didn't bother to implement any of the
 buggy tools that would let me change the
 instructions from "keyboard" to "swipe"
 until the first touch is received.  It seemed
-too inconsequential.
+too inconsequential.  The message changes on
+first touch.
 
 ## Lessons learned
 
