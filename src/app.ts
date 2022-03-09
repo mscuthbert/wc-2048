@@ -239,14 +239,23 @@ export class MApp extends LitElement {
         // currently not unloaded...m_grid will never disappear.
         // still, that would make for better hygiene.
         this.m_grid.addEventListener('touchstart', e => {
+            if (this.game_over || this.show_game_won) {
+                return;
+            }
             const touch: Touch = (e as TouchEvent).changedTouches[0];
             this.last_touch_x_y = [touch.pageX, touch.pageY];
             e.preventDefault();
         });
         this.m_grid.addEventListener('touchmove', e => {
+            if (this.game_over || this.show_game_won) {
+                return;
+            }
             e.preventDefault();
         });
         this.m_grid.addEventListener('touchend', e => {
+            if (this.game_over || this.show_game_won) {
+                return;
+            }
             const TOUCH_MOVE_THRESHOLD = 10;
             const touch: Touch = (e as TouchEvent).changedTouches[0];
             const x_distance_signed = touch.pageX - this.last_touch_x_y[0];
