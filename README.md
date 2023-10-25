@@ -14,7 +14,7 @@ original.
 Michael Scott Asato Cuthbert
 (MIT Associate Professor)
 
-cuthbert@post.harvard.edu
+michael.asato.cuthbert@gmail.com
 
 http://www.trecento.com/
 

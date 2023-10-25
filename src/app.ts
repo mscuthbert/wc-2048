@@ -395,7 +395,7 @@ export class MApp extends LitElement {
                         <a class="start-playing-link"
                            @click="${this.start_playing}">Start playing →</a>
                         <a class="feedback-button" role="button"
-                            href="mailto:cuthbert@post.harvard.edu">Send Feedback</a>
+                            href="mailto:michael.asato.cuthbert@gmail.com">Send Feedback</a>
                     </p>
                 </div>
                 <hr>
