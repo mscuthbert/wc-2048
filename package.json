@@ -4,6 +4,8 @@
   "description": "Rewrite of 2048 in web components",
   "main": "dist/bundle.js",
   "scripts": {
+    "build": "webpack --config webpack.config.js",
+    "watch": "webpack --config webpack.config.js --watch",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "author": "Michael Scott Asato Cuthbert",

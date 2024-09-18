@@ -264,7 +264,7 @@ let MApp = class MApp extends lit__WEBPACK_IMPORTED_MODULE_0__.LitElement {
                         <a class="start-playing-link"
                            @click="${this.start_playing}">Start playing →</a>
                         <a class="feedback-button" role="button"
-                            href="mailto:cuthbert@post.harvard.edu">Send Feedback</a>
+                            href="mailto:michael.asato.cuthbert@gmail.com">Send Feedback</a>
                     </p>
                 </div>
                 <hr>
@@ -280,7 +280,8 @@ let MApp = class MApp extends lit__WEBPACK_IMPORTED_MODULE_0__.LitElement {
                     written from scratch.  The only time the original code was consulted
                     was to verify the probability of starting with "4" instead of "2"
                     and to figure out how to trigger the "You won!" message without
-                    needing to solve the game.
+                    needing to solve the game. 
+                    <small>Copyright © 2022–23, Michael Scott Asato Cuthbert, All Rights Reserved.</small>
                 </p>
             </div>
         `;

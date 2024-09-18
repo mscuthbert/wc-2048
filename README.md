@@ -12,8 +12,6 @@ original.
 ## Author
 
 Michael Scott Asato Cuthbert
-(MIT Associate Professor)
-
 michael.asato.cuthbert@gmail.com
 
 http://www.trecento.com/
@@ -177,3 +175,14 @@ approximately:
 Clearly, there is a huge opportunity for making
 CSS more natural in web components if wider
 adaption is important.
+
+# building
+
+to develop the project, run:
+
+```
+npm install
+npm run watch
+```
+
+and point a browser to dist/index.html

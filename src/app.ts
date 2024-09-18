@@ -411,7 +411,8 @@ export class MApp extends LitElement {
                     written from scratch.  The only time the original code was consulted
                     was to verify the probability of starting with "4" instead of "2"
                     and to figure out how to trigger the "You won!" message without
-                    needing to solve the game.
+                    needing to solve the game. 
+                    <small>Copyright © 2022–23, Michael Scott Asato Cuthbert, Released under BSD license.</small>
                 </p>
             </div>
         `;
